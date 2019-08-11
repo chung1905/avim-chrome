@@ -1,5 +1,5 @@
 var document = window.document;
-var sendRequest = browser.runtime.sendMessage;
+var sendMessage = browser.runtime.sendMessage;
 var onMessage = browser.runtime.onMessage;
 var allFrames = [];
 
@@ -96,10 +96,10 @@ function _keyUpHandler(evt) {
     var code = evt.which;
 
     // Press Ctrl twice to off/on AVIM
-    if (code == 17) {
+    if (code === 17) {
         if (isPressCtrl) {
             isPressCtrl = false;
-            sendRequest({'turn_avim': 'onOff'}, configAVIM);
+            sendMessage({'turn_avim': 'onOff'}).then(configAVIM);
         } else {
             isPressCtrl = true;
             // Must press twice in 300ms
@@ -177,7 +177,7 @@ function removeOldAVIM() {
 }
 
 function newAVIMInit() {
-    if (typeof AVIMObj != "undefined" && AVIMObj) {
+    if (typeof AVIMObj !== "undefined" && AVIMObj) {
         removeOldAVIM();
     }
 
@@ -203,7 +203,7 @@ function configAVIM(data) {
     newAVIMInit();
 }
 
-sendRequest({'get_prefs': 'all'}, configAVIM);
+sendMessage({'get_prefs': 'all'}).then(configAVIM);
 
 onMessage.addListener(function (request, sender, sendResponse) {
     configAVIM(request);

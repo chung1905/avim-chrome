@@ -8,7 +8,6 @@
     var browserAction = browser.browserAction;
     var contextMenus = browser.menus;
     var onMessage = browser.runtime.onMessage;
-
     // End API Wrapper
 
     var localStorage = window.localStorage;

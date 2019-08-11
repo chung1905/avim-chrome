@@ -1,8 +1,8 @@
 {
-  "name": "Avim",
+  "name": "__MSG_extName__",
   "version": "0.2",
   "manifest_version": 2,
-  "description": "Avim for firefox",
+  "description": "__MSG_extDescription__",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -11,7 +11,6 @@
   "browser_action": {
     "default_icon": "icons/icon19.png",
     "default_title": "__MSG_extAction__"
-//    "default_popup": "popup.html"
   },
   "content_scripts": [
     {
