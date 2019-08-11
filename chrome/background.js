@@ -43,7 +43,7 @@
         callback.call(this, prefs);
     }
 
-    function turnAvim(callback) {
+    function toggleAvim(callback) {
         if (!getLocalStorageItem('method')) {
             init();
         }
@@ -53,7 +53,9 @@
 
         getPrefs(function (prefs) {
             updateAllTabs(prefs);
-            callback.call(this);
+            if (typeof callback === "function") {
+                callback.call(this);
+            }
         });
     }
 
@@ -61,6 +63,7 @@
         getAllTabsInWindow(null, function (tabs) {
             for (var i = 0; i < tabs.length; i++) {
                 var tab = tabs[i];
+                // todo: exception when send to tab about:debugging and similar urls (firefox url, etc,...)
                 sendMessage2Tab(tab.id, prefs);
             }
         });
@@ -85,16 +88,16 @@
     }
 
     function savePrefs(request, callback) {
-        if (typeof request.method != 'undefined') {
+        if (typeof request.method !== 'undefined') {
             setLocalStorageItem("method", request.method);
         }
-        if (typeof request.onOff != 'undefined') {
+        if (typeof request.onOff !== 'undefined') {
             setLocalStorageItem("onOff", request.onOff);
         }
-        if (typeof request.ckSpell != 'undefined') {
+        if (typeof request.ckSpell !== 'undefined') {
             setLocalStorageItem("ckSpell", request.ckSpell);
         }
-        if (typeof request.oldAccent != 'undefined') {
+        if (typeof request.oldAccent !== 'undefined') {
             setLocalStorageItem("oldAccent", request.oldAccent);
         }
 
@@ -116,7 +119,7 @@
         }
 
         if (request.turn_avim) {
-            turnAvim(sendResponse);
+            toggleAvim(sendResponse);
             return;
         }
     }
@@ -160,5 +163,6 @@
     }
 
     init();
+    browserAction.onClicked.addListener(toggleAvim);
 
 })(window);
