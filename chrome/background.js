@@ -124,20 +124,6 @@
         }
     }
 
-    function genericOnClick() {
-        alert("demo");
-    }
-
-    function createMenus() {
-        var parentId = contextMenus.create({"title": "AVIM", "contexts": ["selection"]});
-        var demo = contextMenus.create({
-            "title": "AVIM Demo",
-            "contexts": ["selection"],
-            "parentId": parentId,
-            "onclick": genericOnClick
-        });
-    }
-
     function init() {
         if (!getLocalStorageItem('method')) {
             setLocalStorageItem('method', '0');

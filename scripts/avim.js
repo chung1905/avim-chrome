@@ -341,16 +341,13 @@ function start(obj, key) {
     } else if (method == 1) { // TELEX Method
         uni = telex;
         AVIMObj.D2 = "DAWEO";
-    }
-    else if (method == 2) { // VNI Method
+    } else if (method == 2) { // VNI Method
         uni = vni;
         AVIMObj.D2 = "6789";
-    }
-    else if (method == 3) { // VIQR Method
+    } else if (method == 3) { // VIQR Method
         uni = viqr;
         AVIMObj.D2 = "D^+(";
-    }
-    else if (method == 4) { // VIQR2 Method
+    } else if (method == 4) { // VIQR2 Method
         uni = viqr2;
         AVIMObj.D2 = "D^*(";
     }
@@ -518,7 +515,7 @@ function findC(word, k, sf) {
             }
         }
     }
-    if ((uk != AVIMObj.Z) && (typeof(res) != 'object')) {
+    if ((uk != AVIMObj.Z) && (typeof (res) != 'object')) {
         if (AVIMObj.spellerr(word, k)) {
             return false;
         }
@@ -685,7 +682,7 @@ function main(word, k, i, a, noNormC) {
         got = false, t = "d,D,a,A,a,A,o,O,u,U,e,E,o,O".split(",");
     var sfa = [AVIMObj.ds1, AVIMObj.as1, AVIMObj.es1, AVIMObj.os1, AVIMObj.mocs1, AVIMObj.trangs1], by = [], sf = [], h,
         g;
-    if ((method == 2) || ((method === 0) && (a[0] == "9"))) {
+    if ((method === 2) || ((method === 0) && (a[0] == "9"))) {
         AVIMObj.DAWEO = "6789";
         AVIMObj.SFJRX = "12534";
         AVIMObj.S = "1";
@@ -975,17 +972,12 @@ function retUni(word, k, pos) {
     }
 }
 
-/*function ifInit(word) {
-    var sel = word.getSelection();
-    _range = sel ? sel.getRangeAt(0) : document.createRange();
-}/**/
-
 function ifMoz(e) {
     // Init code for editable iframes and divs
     var code = e.which, avim = AVIMObj.AVIM, cwi = e.target.parentNode.wi;
-    if (typeof(avim) == "undefined") avim = AVIMObj;
-    if (typeof(cwi) == "undefined") cwi = e.target.parentNode.parentNode.wi;
-    if (typeof(cwi) == "undefined") cwi = window;
+    if (typeof (avim) === "undefined") avim = AVIMObj;
+    if (typeof (cwi) === "undefined") cwi = e.target.parentNode.parentNode.wi;
+    if (typeof (cwi) === "undefined") cwi = window;
     if (e.ctrlKey || (e.altKey && (code != 92) && (code != 126))) return;
 
     // get current caret and its node
@@ -996,7 +988,7 @@ function ifMoz(e) {
 
     avim.sk = fromCharCode(code);
     avim.saveStr = "";
-    if (checkCode(code) || !range.startOffset || (typeof(node.data) == 'undefined')) return;
+    if (!checkExecCode(code) || !range.startOffset || (typeof (node.data) == 'undefined')) return;
     node.sel = false;
 
     if (node.data) {
@@ -1039,11 +1031,15 @@ function ifMoz(e) {
     }
 }
 
-function checkCode(code) {
-    if (((onOff === 0) || ((code < 45) && (code != 42) && (code != 32) && (code != 39) && (code != 40) && (code != 43)) || (code == 145) || (code == 255))) {
-        return true;
-    }
+function checkExecCode(code) {
+    code = parseInt(code);
+    return (onOff === 1) && ![145, 255].includes(code) && ((code >= 45) || [32, 39, 40, 42, 43].includes(code));
 }
+
+// function checkExecCode(code) {
+//     code = parseInt(code);
+//     return !((onOff === 0) || [145, 255].includes(code) || ((code < 45) && ![32, 39, 40, 42, 43].includes(code)));
+// }
 
 function notWord(word) {
     var str = " \r\n#,\\;.:-_()<>+-*/=?!\"$%{}[]\'~|^@&\t" + fromCharCode(160);
@@ -1051,11 +1047,7 @@ function notWord(word) {
 }
 
 function notNumber(word) {
-    if (isNaN(word) || (word == 'e')) {
-        return true;
-    } else {
-        return false;
-    }
+    return (isNaN(word) || (word === 'e'));
 }
 
 function upperCase(word) {

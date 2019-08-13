@@ -1,36 +1,8 @@
 var document = window.document;
 var sendMessage = browser.runtime.sendMessage;
 var onMessage = browser.runtime.onMessage;
-var allFrames = [];
 
 var inputTypes = ["textarea", "text", "search", "tel"];
-
-function AVIMInit(AVIM, isAttach) {
-    allFrames = document.getElementsByTagName("iframe");
-    for (AVIM.g = 0; AVIM.g < allFrames.length; AVIM.g++) {
-        if (findIgnore(allFrames[AVIM.g])) {
-            continue;
-        }
-        var iframedit;
-        try {
-            AVIM.wi = allFrames[AVIM.g].contentWindow;
-            iframedit = AVIM.wi.document;
-            iframedit.wi = AVIM.wi;
-            if (iframedit && (upperCase(iframedit.designMode) == "ON")) {
-                iframedit.AVIM = AVIM;
-                if (isAttach) {
-                    attachEvt(iframedit, "keypress", ifMoz, false);
-                    attachEvt(iframedit, "keydown", keyDownHandler, false);
-                } else {
-                    attachEvt(iframedit, "keypress", ifMoz, false);
-                    attachEvt(iframedit, "keydown", keyDownHandler, false);
-                }
-            }
-        } catch (e) {
-        }
-    }
-    /**/
-}
 
 function findIgnore(el) {
     var va = exclude, i;
@@ -42,39 +14,15 @@ function findIgnore(el) {
     return false;
 }
 
-function findFrame() {
-    for (var i = 0; i < allFrames.length; i++) {
-        if (findIgnore(allFrames[i])) return;
-        AVIMObj.frame = allFrames[i];
-        if (typeof(AVIMObj.frame) != "undefined") {
-            try {
-                if (AVIMObj.frame.contentWindow.document && AVIMObj.frame.contentWindow.event) {
-                    return AVIMObj.frame.contentWindow;
-                }
-            } catch (e) {
-                if (AVIMObj.frame.document && AVIMObj.frame.event) {
-                    return AVIMObj.frame;
-                }
-            }
-        }
-    }
-}
-
 function _keyPressHandler(e) {
     var el = e.target, code = e.which;
-    if (e.ctrlKey) {
+    if (e.ctrlKey || e.altKey || !checkExecCode(code)) {
         return;
     }
-    if (e.altKey && (code != 92) && (code != 126)) {
-        return;
-    }
-    if (inputTypes.indexOf(el.type) < 0) {// Not contains in list of input types
+    if (inputTypes.indexOf(el.type) < 0) { // Not contains in list of input types
         if (el.isContentEditable) {
             ifMoz(e);
         }
-        return;
-    }
-    if (checkCode(code)) {
         return;
     }
     AVIMObj.sk = fromCharCode(code);
@@ -112,32 +60,15 @@ function _keyUpHandler(evt) {
     }
 }
 
-function _keyDownHandler(evt) {
-    var key;
-    if (evt == "iframe") {
-        AVIMObj.frame = findFrame();
-        key = AVIMObj.frame.event.keyCode;
-    } else {
-        key = evt.which;
-    }
-}
-
 function keyUpHandler(evt) {
+    // Only for on/off purpose
     _keyUpHandler(evt);
-    // console.log("keyUpHandler");
-}
-
-function keyDownHandler(evt) {
-    _keyDownHandler(evt);
-    // console.log("keyDownHandler");
 }
 
 function keyPressHandler(evt) {
-    var success = _keyPressHandler(evt);
-    if (success === false) {
+    if (_keyPressHandler(evt) === false) {
         evt.preventDefault();
     }
-    // console.log("keyPressHandler");
 }
 
 function attachEvt(obj, evt, handle, capture) {
@@ -148,30 +79,12 @@ function removeEvt(obj, evt, handle, capture) {
     obj.removeEventListener(evt, handle, capture);
 }
 
-var ajaxCounter = 0;
-
-function AVIMAJAXFix() {
-    if (isNaN(parseInt(ajaxCounter))) {
-        ajaxCounter = 0;
-    } else {
-        ajaxCounter = parseInt(ajaxCounter);
-    }
-    AVIMInit(AVIMObj, true);
-    ajaxCounter++;
-    if (ajaxCounter < 100) {
-        setTimeout(AVIMAJAXFix, 100);
-    }
-}
-
 function removeOldAVIM() {
     // Untrigger event
-    removeEvt(document, "mouseup", AVIMAJAXFix, false);
-    removeEvt(document, "keydown", keyDownHandler, true);
     removeEvt(document, "keypress", keyPressHandler, true);
     removeEvt(document, "keyup", keyUpHandler, true);
 
     // Remove AVIM
-    AVIMInit(AVIMObj, false);
     AVIMObj = null;
     //delete AVIMObj;
 }
@@ -181,13 +94,9 @@ function newAVIMInit() {
         removeOldAVIM();
     }
 
-    allFrames = document.getElementsByTagName("iframe");
     AVIMObj = new AVIM();
-    AVIMAJAXFix();
 
     // Trigger event
-    attachEvt(document, "mouseup", AVIMAJAXFix, false);
-    attachEvt(document, "keydown", keyDownHandler, true);
     attachEvt(document, "keyup", keyUpHandler, true);
     attachEvt(document, "keypress", keyPressHandler, true);
 }
